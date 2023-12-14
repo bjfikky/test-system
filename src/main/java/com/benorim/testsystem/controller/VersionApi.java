@@ -1,4 +1,4 @@
-package com.example.testsystem.controller;
+package com.benorim.testsystem.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-public class VersionController {
+public class VersionApi {
 
     @Value("${project.version}")
     private String projectVersion;
