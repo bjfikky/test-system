@@ -1,4 +1,4 @@
-package com.example.testsystem;
+package com.benorim.testsystem;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
