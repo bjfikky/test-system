@@ -5,12 +5,10 @@ import com.benorim.testsystem.entity.Question;
 import com.benorim.testsystem.exception.InvalidOptionsException;
 import com.benorim.testsystem.repository.QuestionRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class QuestionService {
 
     public final QuestionRepository questionRepository;
