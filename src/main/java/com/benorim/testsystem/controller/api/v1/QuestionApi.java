@@ -1,8 +1,10 @@
 package com.benorim.testsystem.controller.api.v1;
 
 import com.benorim.testsystem.controller.api.request.QuestionRequest;
+import com.benorim.testsystem.controller.api.response.QuestionResponse;
 import com.benorim.testsystem.entity.Option;
 import com.benorim.testsystem.entity.Question;
+import com.benorim.testsystem.mapper.QuestionMapper;
 import com.benorim.testsystem.service.QuestionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +33,8 @@ public class QuestionApi {
                 .collect(Collectors.toList());
 
         Question question = new Question(questionRequest.text(), options);
+        question.getOptions().forEach(option -> option.setQuestion(question));
+
         Question addedQuestion = questionService.addQuestion(question);
 
         String uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -50,8 +54,9 @@ public class QuestionApi {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Question> getQuestionById(@PathVariable Long id) {
+    public ResponseEntity<QuestionResponse> getQuestionById(@PathVariable Long id) {
         Question question = questionService.getQuestionById(id);
-        return question != null ? new ResponseEntity<>(question, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        QuestionResponse response = QuestionMapper.mapQuestionToQuestionResponse(question);
+        return response != null ? new ResponseEntity<>(response, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
