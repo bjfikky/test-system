@@ -1,4 +1,4 @@
 package com.benorim.testsystem.controller.api.response;
 
-public record OptionResponse(String text, boolean correct) {
+public record OptionResponse(Long id, String text, boolean correct) {
 }

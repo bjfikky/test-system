@@ -17,4 +17,10 @@ public class ApplicationExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidOptionsException(InvalidOptionsException exception) {
         return new ResponseEntity<>(new ErrorResponse(exception.getMessage(), ErrorState.INVALID_OPTIONS), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(QuestionNotFoundException.class)
+    @ResponseStatus(value= HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleQuestionNotFoundException(QuestionNotFoundException exception) {
+        return new ResponseEntity<>(new ErrorResponse(exception.getMessage(), ErrorState.QUESTION_NOT_EXISTS), HttpStatus.BAD_REQUEST);
+    }
 }
