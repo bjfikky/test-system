@@ -47,10 +47,16 @@ public class QuestionApi {
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteQuestion(@PathVariable Long id) {
+        questionService.deleteQuestion(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping
-    public ResponseEntity<List<Question>> getAllQuestions() {
+    public ResponseEntity<List<QuestionResponse>> getAllQuestions() {
         List<Question> questions = questionService.getAllQuestions();
-        return new ResponseEntity<>(questions, HttpStatus.OK);
+        return new ResponseEntity<>(QuestionMapper.mapQuestionsToQuestionsResponse(questions), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
