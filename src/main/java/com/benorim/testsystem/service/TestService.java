@@ -2,6 +2,7 @@ package com.benorim.testsystem.service;
 
 import com.benorim.testsystem.entity.Test;
 import com.benorim.testsystem.entity.TestTaker;
+import com.benorim.testsystem.exception.InvalidTestException;
 import com.benorim.testsystem.repository.TestRepository;
 import com.benorim.testsystem.repository.TestTakerRepository;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,9 @@ public class TestService {
     }
 
     public Test getTestByIdAndTestTakerId(Long testId, Long testTakerId) {
-        return testRepository.findByIdAndTestTakerId(testId, testTakerId).orElse(null);
+        Test test = testRepository.findByIdAndTestTakerId(testId, testTakerId).orElse(null);
+        if (test == null) throw new InvalidTestException("Test does not exist for test taker");
+        return test;
     }
 
     public TestTaker getTestTaker(Long id) {
