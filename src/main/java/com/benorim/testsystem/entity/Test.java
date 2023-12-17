@@ -8,7 +8,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -16,11 +19,24 @@ public class Test {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private boolean completed;
+    @Temporal(TemporalType.DATE)
+    private Date dateAdded;
     @OneToMany(cascade = CascadeType.REMOVE)
     private List<Question> questions;
     @OneToOne
     @JoinColumn(name = "test_taker_id")
     private TestTaker testTaker;
+
+    public Test() {
+    }
+
+    public Test(List<Question> questions, TestTaker testTaker) {
+        this.questions = questions;
+        this.testTaker = testTaker;
+        this.completed = false;
+        this.dateAdded = new Date();
+    }
 
     public Long getId() {
         return id;
@@ -28,6 +44,18 @@ public class Test {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public Date getDateAdded() {
+        return dateAdded;
     }
 
     public List<Question> getQuestions() {
