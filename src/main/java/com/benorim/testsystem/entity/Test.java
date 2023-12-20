@@ -22,11 +22,14 @@ public class Test {
     private boolean completed;
     @Temporal(TemporalType.DATE)
     private Date dateAdded;
+    @Temporal(TemporalType.DATE)
+    private Date dateCompleted;
     @OneToMany(cascade = CascadeType.REMOVE)
     private List<Question> questions;
     @OneToOne
     @JoinColumn(name = "test_taker_id")
     private TestTaker testTaker;
+    private double percentScore;
 
     public Test() {
     }
@@ -58,6 +61,14 @@ public class Test {
         return dateAdded;
     }
 
+    public Date getDateCompleted() {
+        return dateCompleted;
+    }
+
+    public void setDateCompleted(Date dateCompleted) {
+        this.dateCompleted = dateCompleted;
+    }
+
     public List<Question> getQuestions() {
         return questions;
     }
@@ -72,5 +83,13 @@ public class Test {
 
     public void setTestTaker(TestTaker testTaker) {
         this.testTaker = testTaker;
+    }
+
+    public double getPercentScore() {
+        return percentScore;
+    }
+
+    public void setPercentScore(double percentScore) {
+        this.percentScore = percentScore;
     }
 }

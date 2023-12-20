@@ -1,7 +1,8 @@
 package com.benorim.testsystem.enums;
 
 public enum ErrorState {
+    INCOMPLETE_ANSWERS,
     INVALID_OPTIONS,
-    QUESTION_NOT_EXISTS,
-    INVALID_TEST
+    INVALID_TEST,
+    QUESTION_NOT_EXISTS
 }
