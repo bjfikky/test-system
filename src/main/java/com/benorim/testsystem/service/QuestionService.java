@@ -21,13 +21,13 @@ public class QuestionService {
     }
 
     public Question addQuestion(Question question) {
-        List<Option> options = question.getOptions();
-        boolean hasCorrectOption = options.stream().anyMatch(Option::isCorrect);
-        long countCorrectOptions = options.stream().filter(Option::isCorrect).count();
-        if (!hasCorrectOption || countCorrectOptions > 1) {
-            throw new InvalidOptionsException("Exactly one option must be correct");
-        }
+        validateOptions(question.getOptions());
         return questionRepository.save(question);
+    }
+
+    public List<Question> addQuestions(List<Question> questions) {
+        questions.forEach(question -> validateOptions(question.getOptions()));
+        return questionRepository.saveAll(questions);
     }
 
     public void deleteQuestion(Long id) {
@@ -48,5 +48,13 @@ public class QuestionService {
         List<Question> shuffledList = new ArrayList<>(getAllQuestions());
         Collections.shuffle(shuffledList);
         return shuffledList.subList(0, Math.min(count, shuffledList.size()));
+    }
+
+    private static void validateOptions(List<Option> options) {
+        boolean hasCorrectOption = options.stream().anyMatch(Option::isCorrect);
+        long countCorrectOptions = options.stream().filter(Option::isCorrect).count();
+        if (!hasCorrectOption || countCorrectOptions > 1) {
+            throw new InvalidOptionsException("Exactly one option must be correct");
+        }
     }
 }
