@@ -50,7 +50,7 @@ public class QuestionService {
         return shuffledList.subList(0, Math.min(count, shuffledList.size()));
     }
 
-    private static void validateOptions(List<Option> options) {
+    protected static void validateOptions(List<Option> options) {
         boolean hasCorrectOption = options.stream().anyMatch(Option::isCorrect);
         long countCorrectOptions = options.stream().filter(Option::isCorrect).count();
         if (!hasCorrectOption || countCorrectOptions > 1) {
