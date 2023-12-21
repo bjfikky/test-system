@@ -12,10 +12,22 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class ApplicationExceptionHandler {
 
+    @ExceptionHandler(IncompleteAnswersException.class)
+    @ResponseStatus(value= HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleIncompleteAnswersException(IncompleteAnswersException exception) {
+        return new ResponseEntity<>(new ErrorResponse(exception.getMessage(), ErrorState.INCOMPLETE_ANSWERS), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(InvalidOptionsException.class)
     @ResponseStatus(value= HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleInvalidOptionsException(InvalidOptionsException exception) {
         return new ResponseEntity<>(new ErrorResponse(exception.getMessage(), ErrorState.INVALID_OPTIONS), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidTestException.class)
+    @ResponseStatus(value= HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleInvalidTestException(InvalidTestException exception) {
+        return new ResponseEntity<>(new ErrorResponse(exception.getMessage(), ErrorState.INVALID_TEST), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(QuestionNotFoundException.class)

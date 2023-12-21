@@ -14,16 +14,18 @@ import java.util.List;
 @Service
 public class QuestionService {
 
-    public final QuestionRepository questionRepository;
+    private final QuestionRepository questionRepository;
 
     public QuestionService(QuestionRepository questionRepository) {
         this.questionRepository = questionRepository;
     }
 
     public Question addQuestion(Question question) {
-        boolean hasCorrectOption = question.getOptions().stream().anyMatch(Option::isCorrect);
-        if (!hasCorrectOption) {
-            throw new InvalidOptionsException("One option must be correct");
+        List<Option> options = question.getOptions();
+        boolean hasCorrectOption = options.stream().anyMatch(Option::isCorrect);
+        long countCorrectOptions = options.stream().filter(Option::isCorrect).count();
+        if (!hasCorrectOption || countCorrectOptions > 1) {
+            throw new InvalidOptionsException("Exactly one option must be correct");
         }
         return questionRepository.save(question);
     }
