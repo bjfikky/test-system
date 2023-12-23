@@ -2,12 +2,10 @@ package com.benorim.testsystem.service;
 
 import com.benorim.testsystem.entity.Option;
 import com.benorim.testsystem.entity.Test;
-import com.benorim.testsystem.entity.TestTaker;
 import com.benorim.testsystem.exception.InvalidOptionsException;
 import com.benorim.testsystem.exception.InvalidTestException;
 import com.benorim.testsystem.repository.OptionRepository;
 import com.benorim.testsystem.repository.TestRepository;
-import com.benorim.testsystem.repository.TestTakerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -16,12 +14,10 @@ import java.util.List;
 @Service
 public class TestService {
 
-    private final TestTakerRepository testTakerRepository;
     private final TestRepository testRepository;
     private final OptionRepository optionRepository;
 
-    public TestService(TestTakerRepository testTakerRepository, TestRepository testRepository, OptionRepository optionRepository) {
-        this.testTakerRepository = testTakerRepository;
+    public TestService(TestRepository testRepository, OptionRepository optionRepository) {
         this.testRepository = testRepository;
         this.optionRepository = optionRepository;
     }
@@ -30,18 +26,12 @@ public class TestService {
         return testRepository.save(test);
     }
 
-    public TestTaker createTestTaker(String username) {
-        return testTakerRepository.save(new TestTaker(username));
-    }
+
 
     public Test getTestByIdAndTestTakerId(Long testId, Long testTakerId) {
         Test test = testRepository.findByIdAndTestTakerId(testId, testTakerId).orElse(null);
         if (test == null) throw new InvalidTestException("Test does not exist for test taker");
         return test;
-    }
-
-    public TestTaker getTestTaker(Long id) {
-        return testTakerRepository.findById(id).orElse(null);
     }
 
     /**

@@ -3,7 +3,6 @@ package com.benorim.testsystem.controller.api.v1;
 import com.benorim.testsystem.controller.api.request.CreateTestRequest;
 import com.benorim.testsystem.controller.api.request.GetTestRequest;
 import com.benorim.testsystem.controller.api.request.TestAnswerRequest;
-import com.benorim.testsystem.controller.api.request.TestTakerRequest;
 import com.benorim.testsystem.controller.api.response.SubmitTestResponse;
 import com.benorim.testsystem.controller.api.response.TestQuestionResponse;
 import com.benorim.testsystem.entity.Question;
@@ -12,6 +11,7 @@ import com.benorim.testsystem.entity.TestTaker;
 import com.benorim.testsystem.mapper.QuestionMapper;
 import com.benorim.testsystem.service.QuestionService;
 import com.benorim.testsystem.service.TestService;
+import com.benorim.testsystem.service.TestTakerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,15 +30,17 @@ public class TestApi {
 
     private final QuestionService questionService;
     private final TestService testService;
+    private final TestTakerService testTakerService;
 
-    public TestApi(QuestionService questionService, TestService testService) {
+    public TestApi(QuestionService questionService, TestService testService, TestTakerService testTakerService) {
         this.questionService = questionService;
         this.testService = testService;
+        this.testTakerService = testTakerService;
     }
 
     @PostMapping
     public ResponseEntity<Void> createTestQuestions(@Valid @RequestBody CreateTestRequest createTestRequest) {
-        TestTaker testTaker = testService.getTestTaker(createTestRequest.testTakerId());
+        TestTaker testTaker = testTakerService.getTestTaker(createTestRequest.testTakerId());
         List<Question> questions = questionService.getRandomQuestions(createTestRequest.numberOfQuestions());
 
         Test test = testService.createTest(new Test(questions, testTaker));
@@ -46,20 +48,6 @@ public class TestApi {
         String uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(test.getId())
-                .toUriString();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.LOCATION, uri);
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/testTaker")
-    public ResponseEntity<Void> createTestTaker(@Valid @RequestBody TestTakerRequest testTakerRequest) {
-        TestTaker testTaker = testService.createTestTaker(testTakerRequest.username());
-
-        String uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(testTaker.getId())
                 .toUriString();
 
         HttpHeaders headers = new HttpHeaders();
