@@ -39,9 +39,9 @@ public class TestService {
      * @param testId the Id of the Test
      * @param testTakerId the Id of the TestTaker
      * @param selectedOptionsIds the selected Options Ids
-     * @return saves and returns the score as a percentage
+     * @return saves and returns the updated Test
      */
-    public double submitTestAnswers(Long testId, Long testTakerId, List<Long> selectedOptionsIds) {
+    public Test submitTestAnswers(Long testId, Long testTakerId, List<Long> selectedOptionsIds) {
         Test test = getTestByIdAndTestTakerId(testId, testTakerId);
 
         if (test.isCompleted()) {
@@ -62,8 +62,7 @@ public class TestService {
         test.setPercentScore(percentage);
         test.setCompleted(true);
         test.setDateCompleted(new Date());
-        testRepository.save(test);
 
-        return percentage;
+        return testRepository.save(test);
     }
 }
