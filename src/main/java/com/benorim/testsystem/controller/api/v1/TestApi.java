@@ -3,15 +3,16 @@ package com.benorim.testsystem.controller.api.v1;
 import com.benorim.testsystem.controller.api.request.CreateTestRequest;
 import com.benorim.testsystem.controller.api.request.GetTestRequest;
 import com.benorim.testsystem.controller.api.request.TestAnswerRequest;
-import com.benorim.testsystem.controller.api.request.TestTakerRequest;
 import com.benorim.testsystem.controller.api.response.SubmitTestResponse;
 import com.benorim.testsystem.controller.api.response.TestQuestionResponse;
+import com.benorim.testsystem.controller.api.response.TestResponse;
 import com.benorim.testsystem.entity.Question;
 import com.benorim.testsystem.entity.Test;
 import com.benorim.testsystem.entity.TestTaker;
 import com.benorim.testsystem.mapper.QuestionMapper;
 import com.benorim.testsystem.service.QuestionService;
 import com.benorim.testsystem.service.TestService;
+import com.benorim.testsystem.service.TestTakerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,21 +25,25 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
+import static com.benorim.testsystem.mapper.TestMapper.mapTestToTestResponse;
+
 @RestController
 @RequestMapping("/api/v1/test")
 public class TestApi {
 
     private final QuestionService questionService;
     private final TestService testService;
+    private final TestTakerService testTakerService;
 
-    public TestApi(QuestionService questionService, TestService testService) {
+    public TestApi(QuestionService questionService, TestService testService, TestTakerService testTakerService) {
         this.questionService = questionService;
         this.testService = testService;
+        this.testTakerService = testTakerService;
     }
 
     @PostMapping
-    public ResponseEntity<Void> createTestQuestions(@Valid @RequestBody CreateTestRequest createTestRequest) {
-        TestTaker testTaker = testService.getTestTaker(createTestRequest.testTakerId());
+    public ResponseEntity<TestResponse> createTestQuestions(@Valid @RequestBody CreateTestRequest createTestRequest) {
+        TestTaker testTaker = testTakerService.getTestTaker(createTestRequest.testTakerId());
         List<Question> questions = questionService.getRandomQuestions(createTestRequest.numberOfQuestions());
 
         Test test = testService.createTest(new Test(questions, testTaker));
@@ -50,21 +55,7 @@ public class TestApi {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.LOCATION, uri);
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/testTaker")
-    public ResponseEntity<Void> createTestTaker(@Valid @RequestBody TestTakerRequest testTakerRequest) {
-        TestTaker testTaker = testService.createTestTaker(testTakerRequest.username());
-
-        String uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(testTaker.getId())
-                .toUriString();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.LOCATION, uri);
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(mapTestToTestResponse(test), headers, HttpStatus.CREATED);
     }
 
     @PostMapping("/getTestQuestions")
@@ -75,12 +66,12 @@ public class TestApi {
 
     @PostMapping("/submitTestAnswers")
     public ResponseEntity<SubmitTestResponse> submitTestAnswers(@Valid @RequestBody TestAnswerRequest testAnswerRequest) {
-        double percentageScore = testService.submitTestAnswers(
+        Test test = testService.submitTestAnswers(
                 testAnswerRequest.testId(),
                 testAnswerRequest.testTakerId(),
                 testAnswerRequest.selectedOptionsIds());
 
-        SubmitTestResponse submitTestResponse = new SubmitTestResponse(testAnswerRequest.testId(), testAnswerRequest.testTakerId(), percentageScore);
+        SubmitTestResponse submitTestResponse = new SubmitTestResponse(testAnswerRequest.testId(), testAnswerRequest.testTakerId(), test.isCompleted(), test.getPercentScore());
         return  new ResponseEntity<>(submitTestResponse, HttpStatus.OK);
     }
 }
