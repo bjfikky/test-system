@@ -29,7 +29,7 @@ public class Test {
     @OneToOne
     @JoinColumn(name = "test_taker_id")
     private TestTaker testTaker;
-    private double percentScore;
+    private Double percentScore;
 
     public Test() {
     }
@@ -85,7 +85,7 @@ public class Test {
         this.testTaker = testTaker;
     }
 
-    public double getPercentScore() {
+    public Double getPercentScore() {
         return percentScore;
     }
 
