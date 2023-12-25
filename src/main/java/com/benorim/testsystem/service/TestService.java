@@ -9,7 +9,9 @@ import com.benorim.testsystem.repository.TestRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class TestService {
@@ -44,6 +46,20 @@ public class TestService {
     public Test submitTestAnswers(Long testId, Long testTakerId, List<Long> selectedOptionsIds) {
         Test test = getTestByIdAndTestTakerId(testId, testTakerId);
 
+        validateSubmittedTest(testId, testTakerId, selectedOptionsIds, test);
+
+        List<Option> options = optionRepository.findAllById(selectedOptionsIds);
+        long countCorrectOptions = options.stream().filter(Option::isCorrect).count();
+        double percentage = ((double) countCorrectOptions / selectedOptionsIds.size()) * 100;
+
+        test.setPercentScore(percentage);
+        test.setCompleted(true);
+        test.setDateCompleted(new Date());
+
+        return testRepository.save(test);
+    }
+
+    private static void validateSubmittedTest(Long testId, Long testTakerId, List<Long> selectedOptionsIds, Test test) {
         if (test.isCompleted()) {
             throw new InvalidTestException("Test already completed");
         }
@@ -55,14 +71,15 @@ public class TestService {
             throw new InvalidOptionsException("Cannot submit. Not all questions were answered.");
         }
 
-        List<Option> options = optionRepository.findAllById(selectedOptionsIds);
-        long countCorrectOptions = options.stream().filter(Option::isCorrect).count();
-        double percentage = ((double) countCorrectOptions / selectedOptionsIds.size()) * 100;
+        Set<Long> idsOfTestTaken = new HashSet<>();
+        test.getQuestions().forEach(question ->
+                question.getOptions().stream()
+                        .map(Option::getId)
+                        .forEach(idsOfTestTaken::add)
+        );
 
-        test.setPercentScore(percentage);
-        test.setCompleted(true);
-        test.setDateCompleted(new Date());
-
-        return testRepository.save(test);
+        if (!idsOfTestTaken.containsAll(selectedOptionsIds)) {
+            throw new InvalidOptionsException("Cannot submit. You have options that don't belong to test questions.");
+        }
     }
 }

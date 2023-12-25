@@ -5,11 +5,13 @@ import com.benorim.testsystem.controller.api.request.OptionRequest;
 import com.benorim.testsystem.controller.api.request.QuestionRequest;
 import com.benorim.testsystem.controller.api.request.TestAnswerRequest;
 import com.benorim.testsystem.controller.api.request.TestTakerRequest;
+import com.benorim.testsystem.controller.api.response.ErrorResponse;
 import com.benorim.testsystem.controller.api.response.QuestionResponse;
 import com.benorim.testsystem.controller.api.response.SubmitTestResponse;
 import com.benorim.testsystem.controller.api.response.TestResponse;
 import com.benorim.testsystem.controller.api.response.TestTakerResponse;
 import com.benorim.testsystem.entity.Option;
+import com.benorim.testsystem.enums.ErrorState;
 import com.benorim.testsystem.service.TestService;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
@@ -100,6 +102,15 @@ class TestApiTest {
         Option fourthOption2 = test.getQuestions().get(3).getOptions().get(1);
         assertEquals("option 2", fourthOption2.getText());
         assertFalse(fourthOption2.isCorrect());
+
+        // Submitting an optionId that does not belong to the Test questions options
+        List<Long> selectedOptionsIdsWithOneNotBelongOption = List.of(firstOption1.getId(), secondOption1.getId(), thirdOption1.getId(), 1000L);
+        TestAnswerRequest testAnswerRequestWithOneNotBelongOption = new TestAnswerRequest(testId, testTakerId, selectedOptionsIdsWithOneNotBelongOption);
+        ResponseEntity<ErrorResponse> postSubmitTestResponseWithOneNotBelongOption = restTemplate.postForEntity("/api/v1/test/submitTestAnswers", testAnswerRequestWithOneNotBelongOption, ErrorResponse.class);
+        assertEquals(postSubmitTestResponseWithOneNotBelongOption.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertNotNull(postSubmitTestResponseWithOneNotBelongOption.getBody());
+        assertEquals(ErrorState.INVALID_OPTIONS, postSubmitTestResponseWithOneNotBelongOption.getBody().errorState());
+
 
         // Test Submit Answers using the above options
         List<Long> selectedOptionsIds = List.of(firstOption1.getId(), secondOption1.getId(), thirdOption1.getId(), fourthOption2.getId());
