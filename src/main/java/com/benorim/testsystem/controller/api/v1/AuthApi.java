@@ -1,6 +1,8 @@
 package com.benorim.testsystem.controller.api.v1;
 
+import com.benorim.testsystem.controller.api.request.LoginRequest;
 import com.benorim.testsystem.controller.api.request.RegisterRequest;
+import com.benorim.testsystem.controller.api.response.JwtResponse;
 import com.benorim.testsystem.controller.api.response.RegisterResponse;
 import com.benorim.testsystem.entity.User;
 import com.benorim.testsystem.service.AuthenticationService;
@@ -25,12 +27,13 @@ public class AuthApi {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
         User user = authenticationService.register(registerRequest);
-        RegisterResponse response = new RegisterResponse(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
+        RegisterResponse response = new RegisterResponse(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
-//
-//    }
+    @PostMapping("/login")
+    public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+        JwtResponse jwtResponse = authenticationService.login(loginRequest);
+        return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
+    }
 }

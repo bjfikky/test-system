@@ -1,4 +1,6 @@
 package com.benorim.testsystem.controller.api.response;
 
-public record RegisterResponse(Long id, String firstName, String lastName, String email) {
+import com.benorim.testsystem.enums.Role;
+
+public record RegisterResponse(Long id, String firstName, String lastName, String email, Role role) {
 }
