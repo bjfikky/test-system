@@ -5,12 +5,19 @@ import com.benorim.testsystem.enums.ErrorState;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public class ApplicationExceptionHandler {
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(value= HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException exception) {
+        return new ResponseEntity<>(new ErrorResponse(exception.getMessage(), ErrorState.INVALID_USERNAME_OR_PASSWORD), HttpStatus.UNAUTHORIZED);
+    }
 
     @ExceptionHandler(IncompleteAnswersException.class)
     @ResponseStatus(value= HttpStatus.BAD_REQUEST)
