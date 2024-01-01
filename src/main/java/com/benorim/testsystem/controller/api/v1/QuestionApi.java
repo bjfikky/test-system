@@ -26,7 +26,7 @@ import static com.benorim.testsystem.mapper.QuestionMapper.mapQuestionToQuestion
 import static com.benorim.testsystem.mapper.QuestionMapper.mapQuestionsToQuestionsResponse;
 
 @RestController
-@RequestMapping("/api/v1/questions")
+@RequestMapping("/api/v1/admin/questions")
 public class QuestionApi {
 
     private final QuestionService questionService;
