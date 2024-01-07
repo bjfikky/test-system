@@ -159,7 +159,7 @@ class QuestionApiTest {
     private void setJwtToken() {
         final String adminLastName = "admin";
         final String adminFirstName = "admin";
-        final String adminEmail = "admin@email.com";
+        final String adminEmail = "admin@test.com";
         final String adminPassword = "admin1234";
         final String adminEncryptedPassword = this.passwordEncoder.encode(adminPassword);
 
