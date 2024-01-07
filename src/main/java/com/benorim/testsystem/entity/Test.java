@@ -28,13 +28,13 @@ public class Test {
     private List<Question> questions;
     @OneToOne
     @JoinColumn(name = "test_taker_id")
-    private TestTaker testTaker;
+    private User testTaker;
     private Double percentScore;
 
     public Test() {
     }
 
-    public Test(List<Question> questions, TestTaker testTaker) {
+    public Test(List<Question> questions, User testTaker) {
         this.questions = questions;
         this.testTaker = testTaker;
         this.completed = false;
@@ -77,11 +77,11 @@ public class Test {
         this.questions = questions;
     }
 
-    public TestTaker getTestTaker() {
+    public User getTestTaker() {
         return testTaker;
     }
 
-    public void setTestTaker(TestTaker testTaker) {
+    public void setTestTaker(User testTaker) {
         this.testTaker = testTaker;
     }
 
