@@ -77,7 +77,7 @@ class TestApiTest {
 
     @Test
     @DisplayName("Test Taking APIs")
-    void  createTestTakerToSubmittingAnswers() {
+    void createTestQuestionsToSubmittingAnswers() {
         setTestTakerJwtToken();
         setAdminJwtToken();
 
@@ -112,11 +112,12 @@ class TestApiTest {
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-/*
-Doing this in a transaction ensures that Test.GetQuestions are lazy loaded.
-Initially added @Transactional to the entire test method, but this meant that API calls where failing because the added
-objects are completely added yet before trying to GET them
- */
+            /*
+            Doing this in a transaction ensures that Test.GetQuestions are lazy loaded.
+            Initially added @Transactional to the entire test method, but this meant
+            that API calls where failing because the added objects are completely added
+            yet before trying to GET them.
+             */
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 Option firstOption1;
