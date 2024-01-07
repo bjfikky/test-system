@@ -8,11 +8,11 @@ import com.benorim.testsystem.controller.api.response.TestQuestionResponse;
 import com.benorim.testsystem.controller.api.response.TestResponse;
 import com.benorim.testsystem.entity.Question;
 import com.benorim.testsystem.entity.Test;
-import com.benorim.testsystem.entity.TestTaker;
+import com.benorim.testsystem.entity.User;
 import com.benorim.testsystem.mapper.QuestionMapper;
 import com.benorim.testsystem.service.QuestionService;
 import com.benorim.testsystem.service.TestService;
-import com.benorim.testsystem.service.TestTakerService;
+import com.benorim.testsystem.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,17 +33,17 @@ public class TestApi {
 
     private final QuestionService questionService;
     private final TestService testService;
-    private final TestTakerService testTakerService;
+    private final UserService userService;
 
-    public TestApi(QuestionService questionService, TestService testService, TestTakerService testTakerService) {
+    public TestApi(QuestionService questionService, TestService testService, UserService userService) {
         this.questionService = questionService;
         this.testService = testService;
-        this.testTakerService = testTakerService;
+        this.userService = userService;
     }
 
     @PostMapping
     public ResponseEntity<TestResponse> createTestQuestions(@Valid @RequestBody CreateTestRequest createTestRequest) {
-        TestTaker testTaker = testTakerService.getTestTaker(createTestRequest.testTakerId());
+        User testTaker = userService.findById(createTestRequest.testTakerId());
         List<Question> questions = questionService.getRandomQuestions(createTestRequest.numberOfQuestions());
 
         Test test = testService.createTest(new Test(questions, testTaker));
