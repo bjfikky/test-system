@@ -13,6 +13,7 @@ This is a minimum viable product of a **Test System**. It is **Java Spring-boot*
 2. Spring-boot
 3. Java Persistent API (JPA)
 4. PostgreSQL
+5. JWT Authorisation and Authentication
 5. Integration Testing
 6. Unit Testing
 7. Docker for TestContainers
